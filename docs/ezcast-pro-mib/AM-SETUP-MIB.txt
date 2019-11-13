@@ -1,0 +1,433 @@
+AM-SETUP-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY, OBJECT-TYPE, Integer32     FROM SNMPv2-SMI
+    actionsmicro                                FROM AM-SNMP-MIB;
+
+amSetUp MODULE-IDENTITY
+    LAST-UPDATED "201607080000Z"
+    ORGANIZATION "Actions MicroEletronics Co. Ltd."
+    CONTACT-INFO
+        " http://www.actions-micro.com
+	  postal:   Actions MicroEletronics Co. Ltd.
+	            4F.-5, No.736, Jhongjheng Rd., Jhonghe Dist.,
+	            New Taipei City, Taiwan 23511
+	  email:    darrelllao@actions-micro.com
+        "
+    DESCRIPTION
+        "The AM-SNMP setup MIB."
+    REVISION     "201603310000Z"
+    DESCRIPTION
+        "SMIv2 version converted from older MIB definitions."
+    ::= { actionsmicro 1 }
+    
+amAirSetup  OBJECT IDENTIFIER ::= { amSetUp 1 }
+amDeviceManagemant OBJECT IDENTIFIER ::= { amSetUp 2 }
+amAccessControl OBJECT IDENTIFIER ::= { amSetUp 3 }
+amNetworkSetup OBJECT IDENTIFIER ::= { amSetUp 4 }
+amAdvancedSetup OBJECT IDENTIFIER ::= { amSetUp 5 }
+amSystemInfo OBJECT IDENTIFIER ::= { amSetUp 6 }
+amWifiWlan0 OBJECT IDENTIFIER ::= { amSystemInfo 1 }
+amWifiWlan1 OBJECT IDENTIFIER ::= { amSystemInfo 2 }
+amWifiWlan2 OBJECT IDENTIFIER ::= { amSystemInfo 3 }
+amWifiWlan3 OBJECT IDENTIFIER ::= { amSystemInfo 4 } 
+amMibLan OBJECT IDENTIFIER ::= { amSystemInfo 5 } 
+amMibVersion OBJECT IDENTIFIER ::= { amSystemInfo 6} 
+amMibCurstatus OBJECT IDENTIFIER ::= { amSystemInfo 7} 
+AddNetwork  OBJECT IDENTIFIER ::= { amNetworkSetup 5} 
+
+--
+-- AirSetup
+--
+SoftApPassWord  OBJECT-TYPE
+    SYNTAX      OCTET STRING(SIZE(8..64))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "WiFi 2.4G and 5G use the same PSK password."
+    ::= { amAirSetup 1 }
+    
+SoftApHideSSID OBJECT-TYPE
+    SYNTAX      OCTET STRING(SIZE(8..64))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "0:ssid is open,you can see it ;1:ssid is hidden"
+    ::= { amAirSetup 2 }
+    
+EZAir OBJECT-TYPE
+    SYNTAX      OCTET STRING(SIZE(8..64))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "0:Mirror+Streaming;1:Mirror Only."
+    ::= { amAirSetup 3 }
+	
+--
+-- DeviceManagemant
+--
+Language  OBJECT-TYPE
+    SYNTAX      OCTET STRING(SIZE(0..2))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "0:en; 1:fr; 2:de; 3:es; 4:zh-CN; 5:zh-TW; 6:ja; 7:ko; 8:it; 
+        9:ru; 10:nl; 11:pt; 12:tr; 13:ar; 14:tha; 15:fa; 16:auto"
+    ::= { amDeviceManagemant 1 }
+    
+ChangeSSID  OBJECT-TYPE
+    SYNTAX      OCTET STRING(SIZE(8..15))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "The SSID length should be 1~20 characters."
+    ::= { amDeviceManagemant 2 }
+	
+Resolution	OBJECT-TYPE
+    SYNTAX		OCTET STRING
+    MAX-ACCESS 	read-write
+    STATUS		current
+    DESCRIPTION
+        "Get/set resolution;
+        HDMI_TAB id:
+        0:1280x720_50P; 1:1280x720_60P; 2:1920x1080_24P; 3:1920x1080_50P;
+        4:1920x1080_60P; 5:3840x2160_24P; 6:3840x2160_25P; 7:3840x2160_30P;
+        8:4096x2160_24P"
+	::= { amDeviceManagemant 3}
+
+EDIDTable OBJECT-TYPE 
+    SYNTAX     OCTET STRING (SIZE(0..1024))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION 
+        "the system resolution of EDID Table."
+    ::= { amDeviceManagemant 4 } 
+
+MaxConNum OBJECT-TYPE 
+    SYNTAX     OCTET STRING (SIZE(0..3))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "Maximum number of connections in the system.
+        0: 4 users; 1: 8 users; 2: 16 users; 3: 32 users; 4: 64 users;"
+    ::= { amDeviceManagemant 5 }
+--
+--  AccessControl 
+--     
+
+
+CastCodeControl OBJECT-TYPE
+    SYNTAX      OCTET STRING(SIZE(0..8))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "CastCodeControl 0:OFF;1:Random;2:Fixed,only 4 bit digits are allowed.
+        set example:(1)0; (2)1; (3)2;6688;"
+    ::= { amAccessControl 1 }
+
+
+InternetAccessControl  OBJECT-TYPE
+    SYNTAX      OCTET STRING(SIZE(0..8))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "InternetAccessControl  0:All allowed;  1:Casting users allowed;  2:All 
+        denied."
+    ::= { amAccessControl 2 }
+	
+PassowrdHidden			OBJECT-TYPE
+	SYNTAX 				OCTET STRING
+	MAX-ACCESS			read-write
+	STATUS				current
+	DESCRIPTION
+		"Get/Set the password status, 0:off 1:on."
+	::= {amAccessControl 3}
+
+AirView					OBJECT-TYPE
+	SYNTAX 				OCTET STRING
+	MAX-ACCESS			read-write
+	STATUS				current
+	DESCRIPTION
+		"Get/Set the airview, 0:off 1:on.frame_rate:{5000,15000,30000,60000,0}, 
+		 example:1;5000;"
+	::= {amAccessControl 4}
+--
+--  NetworkSetup 
+--     
+
+RouterOrDirectOnly OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE(0..1))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "0:Via Router Allowed; 1:Direct Link Only; 2:Via Router Only"
+    ::= { amNetworkSetup 1 }
+    
+SoftApChannel OBJECT-TYPE
+    SYNTAX      OCTET STRING(SIZE(0..128))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "5G WiFiChannel.Warning!!,Configure without connect router.Channel Auto, input Auto.BandWidth:20/80.SetExample:5G;America;2;Auto;80;
+        channel5g_regiontbl[]={ 
+        1,South Africa,{36,40,44,48}; 
+        1,Israel,{36,40,44,48}; 
+        1,Turkey,{36,40,44,48};
+        1,Egypt,{36,40,44,48};
+        1,Tunisia,{36,40,44,48};
+        1,Kuwait,{36,40,44,48};
+        1,United Arab Emirates,{36,40,44,48};
+        2,Russia,{36,40,44,48,149,153,157,161};
+        2,Singapore,{36,40,44,48,149,153,157,161};
+        1,South America,{36,40,44,48};
+        1,Saudi Arabia,{36,40,44,48};
+        2,America,{36,40,44,48,149,153,157,161};
+        2,Australia,{36,40,44,48,149,153,157,161};
+        2,Canada,{36,40,44,48,149,153,157,161};
+        2,India,{36,40,44,48,149,153,157,161};
+        2,Korea,{36,40,44,48,149,153,157,161};
+        2,Malaysia,{36,40,44,48,149,153,157,161};
+        2,Mexico,{36,40,44,48,149,153,157,161};
+        2,China,{36,40,44,48,149,153,157,161};
+        3,Iran,{149,153,157,161};
+        3,Labanon,{149,153,157,161};
+        3,Qatar,{149,153,157,161};
+        2,Europe,{36,40,44,48,149,153,157,161};
+        1,Japan,{36,40,44,48};
+        2,Taiwan,{36,40,44,48,149,153,157,161};
+        }"
+    ::= { amNetworkSetup 2 }
+
+WiFiManual OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE(0..128))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "set wifi IP;Gateway;Netmask;DNS;	setexample:192.168.48.68;192.168.48.1;255.255.255.0;192.168.48.1;"
+    ::= { amNetworkSetup 3 }
+	
+LanSet OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE(0..128))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "set lan IP;Gateway;Netmask;DNS;	setexample:192.168.48.68;192.168.48.1;255.255.255.0;192.168.48.1;"
+    ::= { amNetworkSetup 4 }    
+
+--
+--  AddNetwork  
+--   
+AddNetworkApply   OBJECT-TYPE
+    SYNTAX      OCTET STRING(SIZE(0..1))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "add network parameters format:ssid;authen;psk; 
+        set example:action;WPA-PSK;12345678;"
+    ::= { AddNetwork 1 }
+
+ScanNetwork   OBJECT-TYPE
+    SYNTAX      OCTET STRING(SIZE(0..1))
+    MAX-ACCESS  write-only
+    STATUS      current
+    DESCRIPTION
+        "Do not need to enter any value ,just press SET key and it will scan 
+        network."
+    ::= { AddNetwork 2 }
+
+ScanresultNetwork   OBJECT-TYPE
+    SYNTAX      OCTET STRING(SIZE(0..8192))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "get the scan network results.
+        format:SSID;Authen;unknown;networkid;macaddr;"
+    ::= { AddNetwork 3 }
+
+ConnectNetwork   OBJECT-TYPE
+    SYNTAX      OCTET STRING(SIZE(0..128))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "set connect network ssid;authen;psk;mac;networkid;
+        set example:action;WPA-PSK;12345678;84:1b:5e:d7:3a:83;-1;"
+    ::= { AddNetwork 4 }
+    
+--
+--  AdvancedSetup  
+--     
+    
+OTAURL OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE(0..128))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "OTA Server,such as http://www.iezvu.com"
+    ::= { amAdvancedSetup 1 }   
+
+AdminPassword OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE(6..64))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "admin password,Password must be between 6 and 64 characters long.It is 
+        md5 encrypted password when you GET it"
+    ::= { amAdvancedSetup 2 }   
+    
+--
+--  SystemInfo  
+--     
+
+Wlan0MacAddress OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "MAC of wlan0."
+    ::= { amWifiWlan0 1 }
+
+Wlan0IPAddress OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "IP of wlan0."
+    ::= { amWifiWlan0 2 } 
+
+Wlan0LinkStatus OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The link status of WLAN0 interface."
+    ::= { amWifiWlan0 3 } 
+
+Wlan1MacAddress OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "MAC of wlan1."
+    ::= { amWifiWlan1 1 }
+
+Wlan1IPAddress OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "IP of wlan1."
+    ::= { amWifiWlan1 2 } 
+
+Wlan1LinkStatus OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The link status of WLAN1 interface."
+    ::= { amWifiWlan1 3 } 
+
+Wlan2MacAddress OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "MAC of wlan2."
+    ::= { amWifiWlan2 1 }
+
+Wlan2IPAddress OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "IP of wlan2."
+    ::= { amWifiWlan2 2 } 
+
+Wlan2LinkStatus OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The link status of WLAN2 interface."
+    ::= { amWifiWlan2 3 } 
+
+Wlan3MacAddress OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "MAC of wlan3."
+    ::= { amWifiWlan3 1 }
+
+Wlan3IPAddress OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "IP of wlan3."
+    ::= { amWifiWlan3 2 } 
+
+Wlan3LinkStatus OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The link status of WLAN3 interface."
+    ::= { amWifiWlan3 3 } 
+
+LanMacAddress OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "MAC of LAN."
+    ::= { amMibLan 1 }
+
+LanIPAddress OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "IP of LAN."
+    ::= { amMibLan 2 } 
+
+LanLinkStatus OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "The link status of LAN interface."
+    ::= { amMibLan 3 } 
+    
+FWLocalVersion OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Local Software  Version."
+    ::= { amMibVersion 1 }
+
+FWOTAServerVersion OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "OTA Server Version."
+    ::= { amMibVersion 2 } 
+    
+LoginUserNum OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Current Login user num."
+    ::= { amMibCurstatus 1 } 
+
+InternetStatus OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Current Internet status."
+    ::= { amMibCurstatus 2 }
+  
+END

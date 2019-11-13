@@ -1,0 +1,180 @@
+AM-SNMP-MIB DEFINITIONS ::= BEGIN
+
+-- Design notes:
+--
+-- The design of this mib may seem unusual in parts, as it was
+-- designed for ease of numerical management routines.
+-- 
+-- In that light, most sub-sections of this mib have four common
+-- numerical oid consistencies:
+--
+-- (iana requeted).ID.1   : an integer index value.  In scalers, this is always
+--               of value 1.  In tables it is a row index.
+-- (47659).ID.2 : a name of the script, process, etc. that this row represents.
+-- (47659).ID.100 : An error flag indicating if an error is present on
+--               that row (a threshold value was crossed, etc).
+-- (47659).ID.101 : An error string describing why the error flag is non-0.
+--
+-- These conventions enable managers to easy examine portions of the
+-- mib by setting the ID to the sub-section they are interested in
+-- monitoring, and then scanning the .100 value to check for an
+-- error(s), and get a more specific error message from .101 for the
+-- named check found in .2.
+--
+-- Row numbers between 2 and 100 are sub-section specific.
+--
+-- Mib sections utilizing the above conventions:
+--   Tables:  	procTable, execTable, diskTable, loadTable
+--   Scalers: 	memory, snmperrs
+
+
+IMPORTS
+    OBJECT-TYPE, NOTIFICATION-TYPE, MODULE-IDENTITY,
+    Integer32, Opaque, enterprises, Counter32, Unsigned32
+        FROM SNMPv2-SMI
+
+    TEXTUAL-CONVENTION, DisplayString, TruthValue
+	FROM SNMPv2-TC;
+
+actionsmicro MODULE-IDENTITY
+    LAST-UPDATED "201603310000Z"
+    ORGANIZATION "Actions MicroEletronics Co. Ltd."
+    CONTACT-INFO    
+	" http://www.actions-micro.com
+          postal:   Actions MicroEletronics Co. Ltd.
+                    4F.-5, No.736, Jhongjheng Rd., Jhonghe Dist.,
+                    New Taipei City, Taiwan 23511
+          email:    darrelllao@actions-micro.com
+
+        "
+    DESCRIPTION
+	"This file defines the private AM(ActionsMicro) SNMP MIB extensions."
+
+    REVISION     "201603310000Z"
+    DESCRIPTION
+	"New object for number of CPUs as counted by the agent"
+    REVISION	 "201105140000Z"
+    DESCRIPTION
+	"New objects for monitoring CPU Steal, Guest and Nice values"
+
+    REVISION	 "200901190000Z"
+    DESCRIPTION
+	"New 64-bit objects for monitoring large disk usage"
+
+    REVISION	 "200611220000Z"
+    DESCRIPTION
+	"Clarify behaviour of objects in the memory & systemStats groups
+         (including updated versions of malnamed mem*Text objects).
+         Define suitable TCs to describe error reporting/fix behaviour."
+
+    REVISION	 "200404070000Z"
+    DESCRIPTION
+	"Added ssCpuRawSoftIRQ for Linux (2.6) and forgotten raw swap counters."
+
+    REVISION	 "200209050000Z"
+    DESCRIPTION
+	"Deprecate the non-raw objects."
+
+    REVISION	 "200109200000Z"
+    DESCRIPTION
+	"Group to monitor log files"
+
+    REVISION	 "200101170000Z"
+    DESCRIPTION
+	"Added raw CPU and IO counters."
+
+    REVISION	 "9912090000Z"
+    DESCRIPTION
+	"SMIv2 version converted from older MIB definitions."
+    ::= { enterprises 47659 }
+
+-- Current AM core mib table entries:
+--   amNetworkMIB     OBJECT IDENTIFIER ::= { actionsMicro 1 } - AM-NETWORK-MIB
+--   amProjectorMIB   OBJECT IDENTIFIER ::= { actionsMicro 2 }
+
+-- Older mib table entries that were changed to new locations above:
+--   (TBD)        OBJECT IDENTIFIER ::= { actionsMicro   1 }
+
+-- Never implemented and removed from the mib:
+--   (TBD)            OBJECT IDENTIFIER ::= { actionsMicro  5 }
+
+--
+-- Define the Float Textual Convention
+--   This definition was written by David Perkins.
+--
+
+Float ::= TEXTUAL-CONVENTION
+    STATUS      current
+    DESCRIPTION
+        "A single precision floating-point number.  The semantics
+         and encoding are identical for type 'single' defined in
+         IEEE Standard for Binary Floating-Point,
+         ANSI/IEEE Std 754-1985.
+         The value is restricted to the BER serialization of
+         the following ASN.1 type:
+             FLOATTYPE ::= [120] IMPLICIT FloatType
+         (note: the value 120 is the sum of '30'h and '48'h)
+         The BER serialization of the length for values of
+         this type must use the definite length, short
+         encoding form.
+
+         For example, the BER serialization of value 123
+         of type FLOATTYPE is '9f780442f60000'h.  (The tag
+         is '9f78'h; the length is '04'h; and the value is
+         '42f60000'h.) The BER serialization of value
+         '9f780442f60000'h of data type Opaque is
+         '44079f780442f60000'h. (The tag is '44'h; the length
+         is '07'h; and the value is '9f780442f60000'h."
+    SYNTAX Opaque (SIZE (7))
+
+AMErrorFlag ::= TEXTUAL-CONVENTION
+    STATUS      current
+    DESCRIPTION
+        "Represents a possible error condition"
+    SYNTAX INTEGER  { noError(0),  error(1) }
+
+AMErrorFix ::= TEXTUAL-CONVENTION
+    STATUS      current
+    DESCRIPTION
+        "Represents a 'push-button' object, to invoke a suitable
+         configured action.  Will always return 0 when read."
+    SYNTAX INTEGER  { noError(0),  runFix(1) }
+
+--
+-- Process table checks
+-- (TBD)
+
+--
+-- Memory usage/watch reporting.
+-- Not supported on all systems!
+-- See agent/mibgroup/ucd_snmp.h to see if its loaded for your architecture.
+-- (TBD)
+
+--    SYNTAX	OBJECT IDENTIFIER
+--    MAX-ACCESS	read-only
+--    STATUS	current
+--    DESCRIPTION
+--	"The registry slot of a mibmodule."
+--    ::= { mrEntry  1 }
+
+
+
+-- possibly used in the future:
+--
+-- ssErrorFlag OBJECT-TYPE
+--     SYNTAX	   AMErrorFlag
+--     MAX-ACCESS  read-only
+--     STATUS      current
+--     DESCRIPTION
+--         "Error flag."
+--     ::= { systemStats 100 }
+-- 
+-- ssErrMessage OBJECT-TYPE
+--     SYNTAX      DisplayString
+--     MAX-ACCESS  read-only
+--     STATUS      current
+--     DESCRIPTION  
+--         "Error message describing the errorflag condition."
+--     ::= { systemStats 101 } 
+
+END

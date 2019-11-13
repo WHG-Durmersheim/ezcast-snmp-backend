@@ -1,0 +1,34 @@
+{
+  "name": "ezcast-snmp-management-backend",
+  "version": "0.0.1",
+  "description": "A backend for use with the EZCast Pro 2 Management frontend to manage many EZCast Pro 2 using SNMP.",
+  "main": "app.js",
+  "scripts": {
+    "prod": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/whg-durmersheim/ezcast-snmp-backend.git"
+  },
+  "keywords": [
+    "ezcast",
+    "snmp",
+    "management",
+    "deployment"
+  ],
+  "author": "See CONTRIBUTORS.MD",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/whg-durmersheim/ezcast-snmp-backend/issues"
+  },
+  "homepage": "https://github.com/whg-durmersheim/ezcast-snmp-backend#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.7.3"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.3"
+  }
+}
