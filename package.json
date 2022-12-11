@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/whg-durmersheim/ezcast-snmp-backend#readme",
   "dependencies": {
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "mongoose": "^5.7.3"
   },
   "devDependencies": {
